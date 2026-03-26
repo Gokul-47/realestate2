@@ -129,11 +129,12 @@
             $('.properties-carousel').owlCarousel({
                 loop: true,
                 margin: 30,
-                nav: true,
+                nav: false,
                 dots: true,
                 autoplay: true,
                 autoplayTimeout: 5000,
                 autoplayHoverPause: true,
+                draggable: true,
                 responsive: {
                     0: {
                         items: 1
@@ -161,7 +162,8 @@
                 slidesToScroll: 1,
                 autoplay: true,
                 autoplaySpeed: 3000,
-                arrows: true,
+                arrows: false,
+                draggable: true,
                 responsive: [
                     {
                         breakpoint: 1200,
@@ -243,53 +245,57 @@
 
     // Initialize Form Validation
     function initFormValidation() {
-        if (typeof $.fn.validate !== 'undefined') {
-            // Contact form validation
-            if ($('#contactForm').length) {
-                $('#contactForm').validate({
-                    rules: {
-                        name: {
-                            required: true,
-                            minlength: 2
-                        },
-                        email: {
-                            required: true,
-                            email: true
-                        },
-                        phone: {
-                            required: true,
-                            minlength: 10
-                        },
-                        message: {
-                            required: true,
-                            minlength: 10
-                        }
-                    },
-                    messages: {
-                        name: {
-                            required: 'Please enter your name',
-                            minlength: 'Name must be at least 2 characters'
-                        },
-                        email: {
-                            required: 'Please enter your email',
-                            email: 'Please enter a valid email'
-                        },
-                        phone: {
-                            required: 'Please enter your phone number',
-                            minlength: 'Phone must be at least 10 digits'
-                        },
-                        message: {
-                            required: 'Please enter your message',
-                            minlength: 'Message must be at least 10 characters'
-                        }
-                    },
-                    submitHandler: function(form) {
-                        alert('Form submitted successfully!');
-                        return false;
-                    }
-                });
-            }
+        // Contact form validation (always active regardless of jquery.validate presence)
+        if ($('#contactForm').length) {
+            $('#contactForm').on('submit', function(e) {
+                e.preventDefault();
+                var isValid = true;
 
+                var firstName = $('#firstName').val().trim();
+                var lastName = $('#lastName').val().trim();
+                var email = $('#email').val().trim();
+                var subject = $('#subject').val();
+                var message = $('#message').val().trim();
+                var agree = $('#agree').is(':checked');
+
+                $('#contactForm').find('input, select, textarea').removeClass('is-invalid');
+
+                if (firstName.length < 2) {
+                    isValid = false;
+                    $('#firstName').addClass('is-invalid');
+                }
+                if (lastName.length < 2) {
+                    isValid = false;
+                    $('#lastName').addClass('is-invalid');
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    isValid = false;
+                    $('#email').addClass('is-invalid');
+                }
+                if (!subject) {
+                    isValid = false;
+                    $('#subject').addClass('is-invalid');
+                }
+                if (message.length < 10) {
+                    isValid = false;
+                    $('#message').addClass('is-invalid');
+                }
+                if (!agree) {
+                    isValid = false;
+                    $('#agree').addClass('is-invalid');
+                }
+
+                if (isValid) {
+                    window.location.href = '404.html';
+                } else {
+                    alert('Please fill out all required fields correctly.');
+                }
+
+                return false;
+            });
+        }
+
+        if (typeof $.fn.validate !== 'undefined') {
             // Login form validation
             if ($('#loginForm').length) {
                 $('#loginForm').validate({
@@ -376,6 +382,37 @@
                         window.location.href = 'login.html';
                         return false;
                     }
+                });
+            }
+
+            // Valuation form submission
+            if ($('.valuation-form').length) {
+                $('.valuation-form').on('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form inputs
+                    var $form = $(this);
+                    var inputs = $form.find('input[required], select[required]');
+                    var isValid = true;
+                    
+                    // Check if all required fields are filled
+                    inputs.each(function() {
+                        if ($(this).val() === '' || $(this).val() === null) {
+                            isValid = false;
+                            $(this).addClass('is-invalid');
+                        } else {
+                            $(this).removeClass('is-invalid');
+                        }
+                    });
+                    
+                    // If all fields are valid, redirect to 404 page
+                    if (isValid) {
+                        window.location.href = '404.html';
+                    } else {
+                        alert('Please fill in all the required fields.');
+                    }
+                    
+                    return false;
                 });
             }
         }
@@ -676,6 +713,12 @@
         }, 600);
     });
 
+    // Force redirect for Agents hero buttons to 404
+    $('.hero-buttons a').on('click', function(e) {
+        e.preventDefault();
+        window.location.href = '404.html';
+    });
+
     // Lazy loading for images
     if ('loading' in HTMLImageElement.prototype) {
         const images = document.querySelectorAll('img[loading="lazy"]');
@@ -742,4 +785,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Console easter egg
     console.log('%cWelcome to Stackly!', 'color: #2563eb; font-size: 20px; font-weight: bold;');
     console.log('%cLooking for a career in real estate? Visit stackly.com/careers', 'color: #6b7280; font-size: 14px;');
+});
+
+// Select all sidebar links
+const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+const sidebar = document.querySelector('.dashboard-sidebar');
+const content = document.querySelector('.dashboard-content');
+
+// Loop through each link
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+
+        // Only apply for mobile screen
+        if (window.innerWidth < 768) {
+            sidebar.classList.remove('active');
+            content.classList.remove('expanded');
+        }
+
+    });
+});
+
+const toggleBtn = document.querySelector('.sidebar-toggle');
+
+toggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+    content.classList.toggle('expanded');
 });
