@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Stackly Real Estate</title>
+
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/logoimg.webp" alt="Stackly Logo" class="logo-img">
+                <span class="logo-text">STACKLY</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="agents.html">Agents</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link btn-login active" href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section class="login-wrapper">
+        <div class="container">
+            <div class="login-container" data-aos="zoom-in">
+                <div class="login-card">
+                    <div class="login-header">
+                        <h2>Welcome Back</h2>
+                        <p>Login to access your account</p>
+                    </div>
+
+                    <!-- User Type Selection -->
+                    <div class="login-options">
+                        <div class="option-btn active" data-type="buyer">
+                            <input type="radio" name="userType" id="buyerType" value="buyer" checked hidden>
+                            <label for="buyerType" style="cursor: pointer; margin: 0; width: 100%;">
+                                <i class="fas fa-user mb-2" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+                                <h4>Buyer/Tenant</h4>
+                                <p>Looking for properties</p>
+                            </label>
+                        </div>
+                        <div class="option-btn" data-type="agent">
+                            <input type="radio" name="userType" id="agentType" value="agent" hidden>
+                            <label for="agentType" style="cursor: pointer; margin: 0; width: 100%;">
+                                <i class="fas fa-briefcase mb-2" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+                                <h4>Agent/Seller</h4>
+                                <p>Manage properties</p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="loginForm" novalidate>
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                name="email"
+                                placeholder="Enter your email"
+                                required
+                            >
+                            <div class="invalid-feedback">
+                                Please enter a valid email address.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="position-relative">
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    required
+                                    minlength="6"
+                                >
+                                <span class="password-toggle" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="toggleIcon"></i>
+                                </span>
+                            </div>
+                            <div class="invalid-feedback">
+                                Password must be at least 6 characters long.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="404.html" class="text-primary" style="font-size: 0.875rem; text-decoration: none;">
+                                    Forgot Password?
+                                </a>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3" style="padding: 0.875rem;">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+
+                        <div class="text-center mb-3">
+                            <p class="mb-0">Don't have an account? <a href="register.html" class="text-primary" style="font-weight: 600; text-decoration: none;">Register</a></p>
+                        </div>
+
+                        <div class="divider" style="text-align: center; margin: 1.5rem 0; position: relative;">
+                            <span style="background: white; padding: 0 1rem; position: relative; z-index: 1; color: var(--text-color);">Or continue with</span>
+                            <hr style="position: absolute; top: 50%; left: 0; right: 0; margin: 0; z-index: 0;">
+                        </div>
+
+                        <!-- Social Login Buttons -->
+                        <div class="social-login" style="display: flex; gap: 1rem;">
+                            <a href="404.html" class="btn btn-outline-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <i class="fab fa-google"></i>
+                                Google
+                            </a>
+                            <a href="404.html" class="btn btn-outline-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <i class="fab fa-facebook-f"></i>
+                                Facebook
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // User Type Selection
+        const optionBtns = document.querySelectorAll('.option-btn');
+        optionBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                optionBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+            });
+        });
+
+        // Password Toggle
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Form Validation and Submission
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Remove previous validation states
+            loginForm.classList.remove('was-validated');
+
+            // Get form values
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const userType = document.querySelector('input[name="userType"]:checked').value;
+
+            // Validation flags
+            let isValid = true;
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailInput = document.getElementById('email');
+            if (!email || !emailRegex.test(email)) {
+                emailInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                emailInput.classList.remove('is-invalid');
+                emailInput.classList.add('is-valid');
+            }
+
+            // Password validation
+            const passwordInput = document.getElementById('password');
+            if (!password || password.length < 6) {
+                passwordInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                passwordInput.classList.remove('is-invalid');
+                passwordInput.classList.add('is-valid');
+            }
+
+            // If validation passes, redirect to appropriate dashboard
+            if (isValid) {
+                // Store user info (in real app, this would be handled by backend)
+                localStorage.setItem('userType', userType);
+                localStorage.setItem('userEmail', email);
+
+                // Redirect based on user type
+                if (userType === 'buyer') {
+                    window.location.href = 'dashboard-buyer.html';
+                } else {
+                    window.location.href = 'dashboard-agent.html';
+                }
+            }
+        });
+
+        // Real-time validation
+        document.getElementById('email').addEventListener('input', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+        });
+    </script>
+
+    <style>
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .is-valid {
+            border-color: var(--success-color) !important;
+        }
+
+        .is-invalid {
+            border-color: var(--danger-color) !important;
+        }
+
+        .invalid-feedback {
+            display: none;
+            color: var(--danger-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .option-btn label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Mobile responsive fixes */
+        @media (max-width: 575px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .social-login {
+                flex-direction: column;
+            }
+
+            .option-btn h4 {
+                font-size: 0.875rem;
+            }
+
+            .option-btn p {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Small devices */
+        @media (min-width: 320px) and (max-width: 374px) {
+            .login-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .option-btn i {
+                font-size: 1.25rem !important;
+            }
+        }
+    </style>
+</body>
+</html>

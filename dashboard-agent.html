@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard - Stackly</title>
+
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body {
+            padding-top: 0;
+            scroll-behavior: smooth;
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 0;
+        }
+
+        .dashboard-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: block;
+        }
+
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            color: var(--text-color);
+            border-radius: 10px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .sidebar-menu i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            width: 25px;
+        }
+
+        .sidebar-menu .menu-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .dashboard-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            background: var(--light-color);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.bg-primary {
+            background: var(--gradient-primary);
+        }
+
+        .stat-icon.bg-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .stat-icon.bg-warning {
+            background: var(--gradient-accent);
+        }
+
+        .stat-icon.bg-info {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .stat-details h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-details p {
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .listing-mini-card {
+            
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .listing-mini-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .listing-mini-img {
+            width: 100px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .listing-mini-details h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .listing-mini-details p {
+            font-size: 0.875rem;
+            color: var(--text-color);
+            margin: 0.25rem 0;
+        }
+
+        .listing-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .listing-status.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .listing-status.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .lead-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .lead-item:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .lead-info h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .lead-info p {
+            font-size: 0.875rem;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .lead-priority {
+            text-align: right;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .priority-badge.high {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .priority-badge.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .priority-badge.low {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .quick-action-btn {
+            padding: 1rem;
+            border-radius: 10px;
+            background: var(--gradient-primary);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .quick-action-btn i {
+            font-size: 2rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 991px) {
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .dashboard-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .dashboard-sidebar.active {
+                transform: translateX(0);
+            }
+
+            .dashboard-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .dashboard-content {
+                padding: 1rem;
+            }
+
+            .dashboard-header {
+                padding: 1.5rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .stat-details h3 {
+                font-size: 1.5rem;
+            }
+
+            .dashboard-card {
+                padding: 1.5rem;
+            }
+
+            .listing-mini-img {
+                width: 80px;
+                height: 60px;
+            }
+
+            .lead-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .lead-priority {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .dashboard-wrapper {
+                flex-direction: column;
+            }
+
+            .dashboard-sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+
+            .dashboard-sidebar.active {
+                left: 0;
+                transform: translateX(0);
+            }
+
+            .dashboard-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .dashboard-card,
+            .dashboard-stats,
+            .row {
+                width: 100%;
+            }
+
+            .col-lg-6 {
+                width: 100%;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboardSidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-brand">STACKLY</a>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard-overview" class="active"><i class="fas fa-th-large"></i><span class="menu-text">Dashboard</span></a></li>
+                <li><a href="#listings"><i class="fas fa-building"></i><span class="menu-text">My Listings</span></a></li>
+                <li><a href="#actions"><i class="fas fa-plus-circle"></i><span class="menu-text">Add Property</span></a></li>
+                <li><a href="#leads"><i class="fas fa-users"></i><span class="menu-text">Leads</span></a></li>
+                <li><a href="#actions"><i class="fas fa-calendar-alt"></i><span class="menu-text">Calendar</span></a></li>
+                <li><a href="#analytics"><i class="fas fa-chart-line"></i><span class="menu-text">Analytics</span></a></li>
+                <li><a href="#actions"><i class="fas fa-user"></i><span class="menu-text">Profile</span></a></li>
+                <li><a href="#actions"><i class="fas fa-cog"></i><span class="menu-text">Settings</span></a></li>
+                <li><a href="login.html"><i class="fas fa-sign-out-alt"></i><span class="menu-text">Logout</span></a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Welcome Header -->
+            <div class="dashboard-header" id="dashboard-overview">
+                <h1>Welcome back</h1>
+                <p>Here's your real estate business overview for today.</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>32</h3>
+                        <p>Active Listings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>4,856</h3>
+                        <p>Total Views</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>47</h3>
+                        <p>Leads</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon bg-info">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>$248K</h3>
+                        <p>Revenue (This Month)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Listings -->
+            <div class="dashboard-card" id="listings">
+                <h3>Recent Listings</h3>
+                <div class="recent-listings">
+                    <div class="listing-mini-card">
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400" alt="Property" class="listing-mini-img">
+                        <div class="listing-mini-details flex-grow-1">
+                            <h5>Modern Family House</h5>
+                            <p><i class="fas fa-map-marker-alt text-primary"></i> 123 Main St, New York, NY</p>
+                            <p><i class="fas fa-bed"></i> 4 Beds | <i class="fas fa-bath"></i> 3 Baths | <i class="fas fa-ruler-combined"></i> 2,500 sqft</p>
+                            <span class="listing-status active">Active</span>
+                        </div>
+                        <div class="listing-price">
+                            <h5 class="text-primary mb-0">$850,000</h5>
+                            <p class="mb-0"><small>15 views today</small></p>
+                        </div>
+                    </div>
+
+                    <div class="listing-mini-card">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400" alt="Property" class="listing-mini-img">
+                        <div class="listing-mini-details flex-grow-1">
+                            <h5>Luxury Downtown Apartment</h5>
+                            <p><i class="fas fa-map-marker-alt text-primary"></i> 456 Park Ave, New York, NY</p>
+                            <p><i class="fas fa-bed"></i> 2 Beds | <i class="fas fa-bath"></i> 2 Baths | <i class="fas fa-ruler-combined"></i> 1,200 sqft</p>
+                            <span class="listing-status active">Active</span>
+                        </div>
+                        <div class="listing-price">
+                            <h5 class="text-primary mb-0">$625,000</h5>
+                            <p class="mb-0"><small>23 views today</small></p>
+                        </div>
+                    </div>
+
+                    <div class="listing-mini-card">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400" alt="Property" class="listing-mini-img">
+                        <div class="listing-mini-details flex-grow-1">
+                            <h5>Suburban Villa with Pool</h5>
+                            <p><i class="fas fa-map-marker-alt text-primary"></i> 789 Oak Rd, Los Angeles, CA</p>
+                            <p><i class="fas fa-bed"></i> 5 Beds | <i class="fas fa-bath"></i> 4 Baths | <i class="fas fa-ruler-combined"></i> 3,800 sqft</p>
+                            <span class="listing-status pending">Pending</span>
+                        </div>
+                        <div class="listing-price">
+                            <h5 class="text-primary mb-0">$1,250,000</h5>
+                            <p class="mb-0"><small>8 views today</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Recent Leads -->
+                <div class="col-lg-6">
+                    <div class="dashboard-card" id="leads">
+                        <h3>Recent Leads</h3>
+                        <div class="leads-list">
+                            <div class="lead-item">
+                                <div class="lead-info">
+                                    <h5>Michael Thompson</h5>
+                                    <p><i class="fas fa-envelope"></i> michael.t@email.com</p>
+                                    <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                                    <p class="mb-0"><small>Interested in: Modern Family House</small></p>
+                                </div>
+                                <div class="lead-priority">
+                                    <span class="priority-badge high">High Priority</span>
+                                    <p class="mb-0"><small>2 hours ago</small></p>
+                                </div>
+                            </div>
+
+                            <div class="lead-item">
+                                <div class="lead-info">
+                                    <h5>Jennifer Martinez</h5>
+                                    <p><i class="fas fa-envelope"></i> j.martinez@email.com</p>
+                                    <p><i class="fas fa-phone"></i> (555) 987-6543</p>
+                                    <p class="mb-0"><small>Interested in: Luxury Downtown Apartment</small></p>
+                                </div>
+                                <div class="lead-priority">
+                                    <span class="priority-badge medium">Medium Priority</span>
+                                    <p class="mb-0"><small>5 hours ago</small></p>
+                                </div>
+                            </div>
+
+                            <div class="lead-item">
+                                <div class="lead-info">
+                                    <h5>David Wilson</h5>
+                                    <p><i class="fas fa-envelope"></i> d.wilson@email.com</p>
+                                    <p><i class="fas fa-phone"></i> (555) 456-7890</p>
+                                    <p class="mb-0"><small>General Inquiry</small></p>
+                                </div>
+                                <div class="lead-priority">
+                                    <span class="priority-badge low">Low Priority</span>
+                                    <p class="mb-0"><small>1 day ago</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Chart -->
+                <div class="col-lg-6">
+                    <div class="dashboard-card" id="analytics">
+                        <h3>Performance Overview</h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dashboard-card" id="actions">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions">
+                    <a href="404.html" class="quick-action-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add New Listing</span>
+                    </a>
+                    <a href="404.html" class="quick-action-btn">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Schedule Viewing</span>
+                    </a>
+                    <a href="404.html" class="quick-action-btn">
+                        <i class="fas fa-users"></i>
+                        <span>Manage Leads</span>
+                    </a>
+                    <a href="404.html" class="quick-action-btn">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>View Analytics</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        // Mobile sidebar toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.getElementById('dashboardSidebar');
+
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+
+                    // Change icon
+                    const icon = this.querySelector('i');
+                    if (sidebar.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth <= 991) {
+                        if (!sidebar.contains(event.target) && !mobileToggle.contains(event.target)) {
+                            sidebar.classList.remove('active');
+                            const icon = mobileToggle.querySelector('i');
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+            }
+
+            // Sidebar navigation active state
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Remove active class from all links
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                });
+            });
+
+            // Initialize Performance Chart
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            const performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Property Views',
+                        data: [1200, 1900, 3000, 5000, 2000, 3000, 4500, 6000, 5500, 7000, 8000, 9500],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Leads Generated',
+                        data: [200, 300, 400, 600, 300, 500, 700, 800, 600, 900, 1000, 1200],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Sales Closed',
+                        data: [50, 80, 120, 150, 100, 180, 200, 250, 220, 300, 350, 400],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Monthly Performance Metrics'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
