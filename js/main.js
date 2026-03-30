@@ -49,6 +49,8 @@
         $('.navbar-nav .nav-link').on('click', function() {
             if ($(window).width() < 992) {
                 $('.navbar-collapse').collapse('hide');
+                // Reset toggler button state to show hamburger icon
+                $('.navbar-toggler').attr('aria-expanded', 'false');
             }
         });
 
@@ -575,6 +577,18 @@
         $('.sidebar-toggle').on('click', function() {
             $('.dashboard-sidebar').toggleClass('collapsed');
             $('.dashboard-content').toggleClass('expanded');
+            // Update toggle button state
+            var isCollapsed = $('.dashboard-sidebar').hasClass('collapsed');
+            $('.sidebar-toggle').attr('aria-expanded', !isCollapsed);
+        });
+
+        // Close sidebar on menu link click (mobile)
+        $('.sidebar-menu a').on('click', function() {
+            if ($(window).width() < 768) {
+                $('.dashboard-sidebar').removeClass('collapsed');
+                $('.dashboard-content').removeClass('expanded');
+                $('.sidebar-toggle').attr('aria-expanded', 'false');
+            }
         });
 
         // Active menu item

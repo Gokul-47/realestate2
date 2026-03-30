@@ -642,6 +642,14 @@
                     sidebarLinks.forEach(l => l.classList.remove('active'));
                     // Add active class to clicked link
                     this.classList.add('active');
+                    
+                    // Close sidebar on mobile when clicking a menu item
+                    if (window.innerWidth <= 991) {
+                        sidebar.classList.remove('active');
+                        const icon = mobileToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
                 });
             });
         });
